@@ -49,7 +49,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
                             <div className="absolute right-0 mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg w-40">
                                 <button
                                     className="flex items-center gap-2 px-4 py-2 hover:bg-gray-800 w-full text-left"
-                                    onClick={() => router.push("/login")}
+                                    onClick={() => router.replace("/login")}
                                 >
                                     <FaSignOutAlt /> Logout
                                 </button>

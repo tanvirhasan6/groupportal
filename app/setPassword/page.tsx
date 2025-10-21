@@ -80,6 +80,7 @@ export default function FuturisticResetForm({ onSubmit }: FuturisticResetFormPro
                         onChange={(e) => setUserid(e.target.value)}
                         placeholder="username or 01XXXXXXXXX"
                         className="w-full rounded-xl border border-white/10 bg-white/3 px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/30"
+                        autoComplete="off"
                     />
                 </div>
 
