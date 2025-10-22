@@ -11,6 +11,7 @@ export default function AuthScreens(): ReactElement {
     const [screen, setScreen] = useState<Screen>('login')
     const [userid, setUserid] = useState<string>("")
     const [userData, setUserData] = useState<any>(null);
+    const [password, setPassword] = useState<string>("");
 
     return (
 
@@ -28,10 +29,17 @@ export default function AuthScreens(): ReactElement {
                         />
                     )}
                     {screen === 'forgot' && <ForgotPassword onBack={() => setScreen('login')} onNext={() => setScreen('otp')} />}
-                    {screen === 'otp' && <OTPInput onBack={() => setScreen('login')} />}
-                    {screen === 'set' && <SetPassword userData={userData} onBack={() => setScreen('login')} onNext={() => setScreen('otp')} onSubmit={function (e: FormEvent<HTMLFormElement>): void {
-                        throw new Error('Function not implemented.')
-                    } } />}
+                    {screen === 'otp' && <OTPInput onBack={() => setScreen('login')} password={password} />}
+                    {
+                        screen === 'set' && 
+                        <SetPassword 
+                            userData={userData} 
+                            onBack={() => setScreen('login')} 
+                            onNext={() => setScreen('otp')} 
+                            setPassword={setPassword}
+                            onSubmit={ function (e: FormEvent<HTMLFormElement>): void { throw new Error('Function not implemented.') } } 
+                        />
+                    }
                 </div>
 
                 {/* <div className="absolute -top-16 -left-16 w-72 h-72 bg-cyan-500/20 rounded-full blur-3xl animate-pulse pointer-events-none" />
@@ -204,15 +212,18 @@ function ForgotPassword({ onBack, onNext }: ForgotPasswordProps): ReactElement {
     )
 }
 
-type OTPInputProps = { onBack: () => void }
+type OTPInputProps = { onBack: () => void; password: string }
 
-function OTPInput({ onBack }: OTPInputProps): ReactElement {
+function OTPInput({ onBack, password  }: OTPInputProps): ReactElement {
 
     const router = useRouter()
     const [otp, setOtp] = useState<string[]>(Array(8).fill(''))
     const inputsRef = useRef<HTMLInputElement[]>([])
     const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState("")
+
+    console.log(password);
+    
 
     const handleChange = (index, value) => {
         if (!/^[0-9]?$/.test(value)) return; // only single numeric digit
@@ -341,11 +352,12 @@ type SetPasswordProps = {
     onBack: () => void
     userData: any
     onNext: () => void
+    setPassword: (value: string) => void
 }
 
-function SetPassword({ userData, onBack, onNext }: SetPasswordProps) {
+function SetPassword({ userData, onBack, onNext, setPassword  }: SetPasswordProps) {
 
-    const [password, setPassword] = useState("");
+    const [localPassword, setLocalPassword] = useState("");
     const [confirm, setConfirm] = useState("");
     const [showPwd, setShowPwd] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
@@ -370,8 +382,8 @@ function SetPassword({ userData, onBack, onNext }: SetPasswordProps) {
         setSuccess("");
 
         // basic validations
-        if (password.length < 5) return setError("Password must be at least 5 characters.");
-        if (password !== confirm) return setError("Passwords do not match.");
+        if (localPassword.length < 5) return setError("Password must be at least 5 characters.");
+        if (localPassword !== confirm) return setError("Passwords do not match.");
 
         setLoading(true);
 
@@ -385,7 +397,10 @@ function SetPassword({ userData, onBack, onNext }: SetPasswordProps) {
 
             const data = await res.json()
 
-            if(data?.status===200) onNext()
+            if(data?.status===200){
+                setPassword(localPassword)
+                onNext()
+            } 
             
         } catch (err) {
             setError(`${err}.Could not update password. Try again later.`);
@@ -394,7 +409,7 @@ function SetPassword({ userData, onBack, onNext }: SetPasswordProps) {
         }
     };
 
-    const strength = passwordStrength(password);
+    const strength = passwordStrength(localPassword);
 
     return (
         <div>
@@ -407,23 +422,12 @@ function SetPassword({ userData, onBack, onNext }: SetPasswordProps) {
                     </div>
                 </div>
 
-                {/* <div>
-                    <label className="block text-sm text-slate-300 mb-2">User ID or Mobile</label>
-                    <input
-                        value={userid}
-                        onChange={(e) => setUserid(e.target.value)}
-                        placeholder="username or 01XXXXXXXXX"
-                        className="w-full rounded-xl border border-white/10 bg-white/3 px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/30"
-                        autoComplete="new-id"
-                    />
-                </div> */}
-
                 <div className="relative">
                 <label className="block text-sm text-slate-300 mb-2">New password</label>
                 <input
                     type={showPwd ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={localPassword}
+                    onChange={(e) => setLocalPassword(e.target.value)}
                     placeholder="At least 5 characters"
                     className="w-full rounded-xl border border-white/10 bg-white/3 px-4 py-3 pr-12 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/30"
                     autoComplete="new-password"
