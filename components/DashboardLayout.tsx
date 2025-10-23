@@ -10,7 +10,16 @@ type DashboardLayoutProps = {
 
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
-    const router = useRouter();
+    const router = useRouter()
+
+    const userInfoCookie =document.cookie
+    .split('; ')
+    .find(row => row.startsWith('user_info='));
+
+    if (!userInfoCookie) router.replace('/login')
+
+    const userInfo = userInfoCookie ? JSON.parse(decodeURIComponent(userInfoCookie?.split('=')[1])) : null;
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false)
 
@@ -40,7 +49,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
                             className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800"
                         >
                             <img
-                                src="https://i.pravatar.cc/40"
+                                src="https://app.zenithlifebd.com/web_docs/120054.jpg"
                                 alt="Profile"
                                 className="w-8 h-8 rounded-full border border-gray-700"
                             />

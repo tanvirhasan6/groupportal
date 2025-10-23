@@ -29,7 +29,7 @@ export default function AuthScreens(): ReactElement {
                         />
                     )}
                     {screen === 'forgot' && <ForgotPassword onBack={() => setScreen('login')} onNext={() => setScreen('otp')} />}
-                    {screen === 'otp' && <OTPInput onBack={() => setScreen('login')} password={password} />}
+                    {screen === 'otp' && <OTPInput onBack={() => setScreen('login')} userData={userData} password={password} />}
                     {
                         screen === 'set' && 
                         <SetPassword 
@@ -68,29 +68,41 @@ function LogIn({ onForgot, onSuccess }: LogInProps): ReactElement {
         setError('')
 
         try {
-            
+
             const res = await fetch('http://localhost:5001/api/grpclaimportal/checkuser', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userid, password })
             })
 
-            const data = await res.json()        
-            
-            if ( data?.status===201) {
-                
-                onSuccess(data.result);
-            }
+            const data = await res.json()  
 
+            if(data?.status===200){ 
+                
+                await fetch("http://localhost:5001/api/grpclaimportal/checkuser", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ userid, password }),
+                    credentials: "include",
+                });
+
+                router.replace("/dashboard");
+                return
+                
+            }
+            
+            if ( data?.status===201) {                
+                onSuccess(data.result)
+                return
+            }
+            
             if (data?.status!==200 || data?.status!==201) {
                 setError(data?.message || 'Login failed')
                 return
             }
-
-            // if(data?.status===200){
-            //     setUserData(data)
-            // }
+            
             setLoading(false)
+
         } catch (err) {
             if (err instanceof Error) {
                 setError(err.message);
@@ -212,18 +224,19 @@ function ForgotPassword({ onBack, onNext }: ForgotPasswordProps): ReactElement {
     )
 }
 
-type OTPInputProps = { onBack: () => void; password: string }
+type OTPInputProps = { 
+    onBack: () => void
+    password: string
+    userData: any 
+}
 
-function OTPInput({ onBack, password  }: OTPInputProps): ReactElement {
+function OTPInput({ onBack, password, userData  }: OTPInputProps): ReactElement {
 
     const router = useRouter()
     const [otp, setOtp] = useState<string[]>(Array(8).fill(''))
     const inputsRef = useRef<HTMLInputElement[]>([])
     const [loading, setLoading] = useState(false);
-    const [alert, setAlert] = useState("")
-
-    console.log(password);
-    
+    const [alert, setAlert] = useState("")    
 
     const handleChange = (index, value) => {
         if (!/^[0-9]?$/.test(value)) return; // only single numeric digit
@@ -285,10 +298,10 @@ function OTPInput({ onBack, password  }: OTPInputProps): ReactElement {
 
         try {
             // Example API call
-            const res = await fetch(`http://localhost:5001/api/grpclaimportal/validateOtp?otpCode=${code}`);
+            const res = await fetch(`http://localhost:5001/api/grpclaimportal/validateOtp?otpCode=${code}&password=${password}&userData=${encodeURIComponent(JSON.stringify(userData))}`);
             const data = await res.json();
 
-            if (data?.status===200) {
+            if (data?.status===200) {                
                 router.replace("/dashboard");
             } else {
                 setAlert(data.message || "OTP verification failed");
