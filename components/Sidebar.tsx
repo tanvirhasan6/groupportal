@@ -1,3 +1,5 @@
+import { useUser } from "@/app/context/UserContext";
+// import Image from "next/image";
 export type SidebarProps = {
     sidebarOpen: boolean;
     setSidebarOpen: (open: boolean) => void;
@@ -5,19 +7,20 @@ export type SidebarProps = {
 
 export const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
 
+    const user = useUser();
+
     return (
         <aside className={`h-full bg-gray-800 border-r border-gray-700 transition-all duration-300 ease-in-out ${sidebarOpen ? "w-64" : "w-0"} overflow-hidden flex flex-col z-40`}>
 
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-700">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col items-center gap-3">
                     <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Zenith_Bank_logo.svg"
+                        src={`https://app.zenithlifebd.com/admin/img/${user?.POLICY_NO}.png`}
                         alt="Company Logo"
-                        className="w-8 h-8"
                     />
                     <h2 className={`text-xl font-semibold text-cyan-400 ${sidebarOpen ? "" : "hidden"}`}>
-                        Zenith Life
+                        {user?.ORGANIZATION}
                     </h2>
                 </div>
             </div>
