@@ -1,19 +1,19 @@
-'use client'
+"use client";
 
-import React, { useState } from "react";
+import { useUser } from "@/app/context/UserContext"
 
-import { DashboardLayout } from "@/components/DashboardLayout";
+export default function DashboardPage() {
 
-const Dashboard: React.FC = () => {
+    const user = useUser();
 
     return (
-        <DashboardLayout>
-            <div className="bg-gray-800 border border-gray-700 rounded-2xl p-8 shadow-lg">
-                <h2 className="text-2xl font-semibold text-cyan-400 mb-4">Welcome to Zenith Life Dashboard</h2>
-                <p className="text-gray-300 leading-relaxed">Manage policies, track claims, and view performance reports here.</p>
-            </div>
-        </DashboardLayout>
-    );
-};
+        
+        <div className="bg-gray-800 border border-gray-700 rounded-2xl p-8 shadow-lg">
 
-export default Dashboard;
+            <h2 className="text-2xl font-semibold text-cyan-400 mb-4">Welcome, {user?.NAME}</h2>
+            <p className="text-gray-300 leading-relaxed">Manage policies, track claims, and view reports here.</p>
+
+        </div>
+
+    )
+}

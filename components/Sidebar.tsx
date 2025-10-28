@@ -11,7 +11,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen })
 
     const user = useUser();
 
-    const groupCode = user.GROUP_CODE
+    const groupCode = user?.GROUP_CODE
 
     let menus
     
@@ -24,12 +24,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen })
     }
 
     const iconMap = {
-    "Profile": <FaUser />,
-    "New Claim": <FaFileAlt />,
-    "Health Card": <FaHeartbeat />,
-    "Death Claim": <FaClipboardList />,
-    "Manage": <FaCog />,
-    "Missing Info": <FaExclamationCircle />,
+        "Profile": <FaUser />,
+        "New Claim": <FaFileAlt />,
+        "Health Card": <FaHeartbeat />,
+        "Death Claim": <FaClipboardList />,
+        "Manage": <FaCog />,
+        "Missing Info": <FaExclamationCircle />,
   };
 
     return (
@@ -61,8 +61,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen })
                     menus.map((menu,index)=>(
                         <Link
                             key={index}
-                            className="text-left px-4 py-2 rounded-lg hover:bg-gray-700 hover:text-cyan-400" 
-                            href={`/${menu.toLowerCase().replace(/\s+/g, "-")}`}
+                            className="text-left px-4 py-2 rounded-lg hover:bg-gray-700 hover:text-cyan-400 flex flex-row gap-2 items-center" 
+                            href={`dashboard/${menu.toLowerCase().replace(/\s+/g, "-")}`}
                         >
                             {iconMap[menu] || <FaFileAlt />} {menu}
                         </Link>

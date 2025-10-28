@@ -1,16 +1,16 @@
     "use client";
     import { useState, ReactNode, useEffect } from "react";
-    import { Sidebar } from "./Sidebar";
+    import { Sidebar } from "../../components/Sidebar";
     import { FaBars, FaSignOutAlt, FaTimes } from "react-icons/fa";
     import { useRouter } from "next/navigation";
     import { UserContext } from "@/app/context/UserContext"
     import toast, { Toaster } from 'react-hot-toast'
 
-    type DashboardLayoutProps = {
+    type Props = {
         children: ReactNode;
-    }
+    };
 
-    export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+    export default function DashboardLayout({ children }: Props) {
 
         const router = useRouter()
 
@@ -74,7 +74,7 @@
                     <div className={`w-full flex-1 flex flex-col transition-all duration-300`}>
                         
                         {/* Top Navbar */}
-                        <header className="flex items-center justify-between px-6 py-3 bg-gray-900 border-b border-gray-700">
+                        <header className="flex items-center justify-between px-2 py-3 bg-gray-900 border-b border-gray-700">
                             <div className="flex gap-1.5 items-center">
                                 
                                 {/* Mobile toggle */}                
@@ -96,9 +96,10 @@
                                     />
                                 </button>
                                 {profileOpen && (
-                                    <div className="absolute right-0 mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg w-40">
+                                    <div className="absolute right-0 mt-2 bg-gray-900 border border-gray-800 rounded-lg shadow-lg min-w-60 flex flex-col">
+                                        <h2 className="flex items-center gap-2 px-4 py-2 hover:bg-gray-950 w-full text-left">{userInfo.NAME}</h2>
                                         <button
-                                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-800 w-full text-left"
+                                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-950 w-full text-left"
                                             onClick={handleLogout}
                                             disabled={loading} 
                                         >
@@ -140,7 +141,7 @@
 
                         {/* Page content */}
                         <main className="flex-1 p-6 overflow-y-auto">
-                                {children}
+                            {children}
                         </main>
 
                     </div>
