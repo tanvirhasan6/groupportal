@@ -83,6 +83,11 @@ const ChangeMobile = () => {
             setLoading(false)
             return
         }
+        else if (mobile.length>11) {
+            toast.error('Mobile No too long.')
+            setLoading(false)
+            return
+        }
         else {
             try {
                 const sendOtp = await fetch(
@@ -102,7 +107,7 @@ const ChangeMobile = () => {
                 }
 
                 if (data?.status === 200) {
-                    toast.success(`OTP sent to your new mobile number`)
+                    toast.success(`OTP sent to your email`)
                 }
 
             } catch (error) {
