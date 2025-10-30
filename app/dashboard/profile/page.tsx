@@ -5,6 +5,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useUser } from "@/app/context/UserContext";
 import { FaCamera, FaEdit } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast'
+import ChangeEmail from './ChangeEmail';
+import ChangeMobile from './ChangeMobile';
 
 type Panel = "email" | "mobile" | "password" | "bank" | null;
 
@@ -42,11 +44,11 @@ const page = () => {
                 if(data?.status===200){
                     setAccountData(data?.result)
                 }else{
-                    toast(data?.message)
+                    toast.error(data?.message)
                 }
                     
             } catch (error) {
-                toast(`${error}`)
+                toast.error(`${error}`)
             }
         }
 
@@ -73,7 +75,7 @@ const page = () => {
         // TODO: upload the file to server here
         };
         reader.readAsDataURL(file);
-    }
+    }    
 
     return (
 
@@ -296,17 +298,13 @@ const page = () => {
                     {/* Dynamic Panels */}
                     {activePanel === "email" && (
                     <UpdateCard title="Update Email">
-                        <input 
-                            type="email" 
-                            placeholder="New Email" 
-                            className="w-full sm:w-8/12 sm:mx-auto border-0 border-b-2 border-gray-500 bg-transparent focus:border-cyan-400 focus:ring-0 focus:outline-none placeholder-gray-400 text-white"
-                        />
+                        <ChangeEmail />
                     </UpdateCard>
                     )}
 
                     {activePanel === "mobile" && (
                     <UpdateCard title="Update Mobile">
-                        <input type="text" placeholder="New Mobile Number" className="input-style"/>
+                        <ChangeMobile/>
                     </UpdateCard>
                     )}
 
@@ -333,20 +331,20 @@ const page = () => {
 
     function UpdateCard({ title, children }: { title: string; children: React.ReactNode }) {
         return (
-            <div className="">
+            <div className="w-full">
                 <h3 className="text-center text-lg underline font-semibold mb-3">{title}</h3>
-                <div className="flex flex-col gap-3">
+                <div className="w-full flex flex-col gap-1">
                     
                     {children}
 
-                    <div>
+                    {/* <div>
                         <button 
                             type='button' 
                             className="bg-green-600 hover:bg-green-700 transition px-4 py-2 rounded-lg text-white"
                         >
                         Submit
                         </button>
-                    </div>
+                    </div> */}
 
                 </div>
             </div>
