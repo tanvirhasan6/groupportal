@@ -7,6 +7,7 @@ import { FaCamera, FaEdit } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast'
 import ChangeEmail from './ChangeEmail';
 import ChangeMobile from './ChangeMobile';
+import ChangeBank from './ChangeBank';
 
 type Panel = "email" | "mobile" | "password" | "bank" | null;
 
@@ -15,6 +16,8 @@ const page = () => {
     const user = useUser();
 
     const userid = user?.USERNAME  
+
+    // console.log(user);    
 
     const [activePanel, setActivePanel] = useState<Panel>(null);
     const [accountData,setAccountData] = useState(null)
@@ -317,9 +320,7 @@ const page = () => {
 
                     {activePanel === "bank" && (
                     <UpdateCard title="Update Bank Info">
-                        <input type="text" placeholder="Bank Name" className="input-style"/>
-                        <input type="text" placeholder="Branch Name" className="input-style"/>
-                        <input type="text" placeholder="Account Number" className="input-style"/>
+                        <ChangeBank/>
                     </UpdateCard>
                     )}
                 </div>

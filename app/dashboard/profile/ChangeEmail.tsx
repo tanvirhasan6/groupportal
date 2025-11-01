@@ -91,14 +91,13 @@ const ChangeEmail = () => {
                     }
                 )
                 const data = await getMailOTPInMobile.json()
-                console.log(data)
 
                 if(data?.status===201){
                     toast.error(`${data?.message}`)
                 }
 
                 if(data?.status===200){
-                    toast.error(`Please input OTC Number below`)
+                    toast.success(`OTP sent to your Mobile. Please input OTP Number below`)
                 }
                 
             } catch (error) {

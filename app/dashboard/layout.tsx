@@ -33,6 +33,7 @@
             try {
                 const parsed = JSON.parse(decodeURIComponent(cookie.split("=")[1]));
                 setUserInfo(parsed);
+                if(!parsed.USERNAME) router.replace("/login")
             } catch (err) {
                 console.error("Failed to parse user_info cookie:", err);
                 router.replace("/login");
