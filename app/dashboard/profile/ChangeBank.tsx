@@ -19,11 +19,12 @@ const ChangeBank = () => {
     // Fetch bank list when bank type changes
     useEffect(() => {
 
-        if (!bankType) return
         setBank('')
         setBranch('')
+        setBankList([])
         setBranchList([])
-        console.log(bankType);
+
+        if (!bankType) return
         
         const fetchBanks = async () => {
             try {
@@ -32,12 +33,13 @@ const ChangeBank = () => {
                     { method: 'GET', credentials: 'include' }
                 )
                 const data = await res.json() 
-                               
+
                 if (data?.status === 200) {
                     const formatted = (data.result || []).map((item: any) => ({
                         value: item.BANKCODE,   // or whatever your field name is
                         label: item.BANKNAME,   // adjust based on your API
                     }))
+                    
                     setBankList(formatted)
                 } else {
                     setBankList([])
@@ -53,6 +55,9 @@ const ChangeBank = () => {
 
     // Fetch branch list when bank changes
     useEffect(() => {
+        
+        setBranchList([])
+        
         if (!bank || !bankType) return
         setBranch('')
         const fetchBranches = async () => {
@@ -63,13 +68,12 @@ const ChangeBank = () => {
                 )
                 const data = await res.json()
                 
-                console.log(data);
                 if (data?.status === 200) {
                     const formatted = (data.result || []).map((item: any) => ({
-                        value: item.BANKCODE,   // or whatever your field name is
-                        label: item.BANKNAME,   // adjust based on your API
+                        value: item.ROUTINGNO,   // or whatever your field name is
+                        label: item.BRANCHNAME,   // adjust based on your API
                     }))
-                    setBranchList(data?.result || [])
+                    setBranchList(formatted)
                 } else {
                     setBranchList([])
                     toast.error(data?.message || 'No branches found.')
@@ -114,7 +118,7 @@ const ChangeBank = () => {
             <Toaster position="top-center" reverseOrder={false} />
 
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Bank Type */}
+                
                 <SearchableSelect
                     label="Bank Type"
                     options={[
@@ -125,53 +129,28 @@ const ChangeBank = () => {
                     value={bankType}
                     onChange={setBankType}
                     placeholder="Select Bank Type"
+                    onFocus={(e) => e.target.select()}
                 />
-
-                {/* Bank */}
-                {/* <select
-                    id="bank"
-                    className="w-full border-b border-gray-600 bg-gray-700 backdrop-blur-md text-white px-2 py-1 focus:outline-none focus:border-cyan-400 appearance-none"
-                    value={bank}
-                    onChange={(e) => setBank(e.target.value)}
-                    disabled={!bankType || bankList.length === 0}
-                >
-                    <option value="">Select Bank</option>
-                    {bankList.map((b) => (
-                        <option key={b.BANKCODE} value={b.BANKCODE}>
-                            {b.BANKNAME}
-                        </option>
-                    ))}
-                </select> */}
-
+                
                 <SearchableSelect
                     label="Bank Name"
-                    options={
-                        bankList.map((b: any) => ({
-                            value: b.BANKCODE,
-                            label: b.BANKNAME,
-                        }))
-                    }
+                    options={bankList}
                     value={bank}
                     onChange={setBank}
                     placeholder="Select Bank"
                     disabled={!bankType || bankList.length === 0}
+                    onFocus={(e) => e.target.select()}
                 />
 
-                {/* Branch */}
-                <select
-                    id="branch"
-                    className="w-full border-b border-gray-600 bg-gray-700 backdrop-blur-md text-white px-2 py-1 focus:outline-none focus:border-cyan-400 appearance-none"
+                <SearchableSelect
+                    label="Branch Name"
+                    options={branchList}
                     value={branch}
-                    onChange={(e) => setBranch(e.target.value)}
-                    disabled={!bank || branchList.length === 0}
-                >
-                    <option value="">Select Branch</option>
-                    {branchList.map((br) => (
-                        <option key={br.ROUTINGNO} value={br.ROUTINGNO}>
-                            {br.BRANCHNAME}
-                        </option>
-                    ))}
-                </select>
+                    onChange={setBranch}
+                    placeholder="Select Branch"
+                    disabled={!bankType || !bank}
+                    onFocus={(e) => e.target.select()}
+                />
 
                 <div>
                     <label className="block text-sm font-medium mb-1">Account Number</label>
