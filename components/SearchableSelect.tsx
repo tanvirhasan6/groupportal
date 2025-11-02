@@ -32,10 +32,21 @@ export default function SearchableSelect({
         opt?.label?.toLowerCase().includes(query?.toLowerCase())
     )
 
+    // useEffect(() => {
+    //     const selected = options.find((opt) => opt.value === value)
+    //     if (selected) setQuery(selected.label)
+    // }, [value])
+
     useEffect(() => {
+
+        if (!value) {
+            setQuery('')
+            return
+        }
         const selected = options.find((opt) => opt.value === value)
         if (selected) setQuery(selected.label)
-    }, [value])
+            
+    }, [value, options])
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {

@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <h1 className="text-9xl">hi</h1>
-      <button onClick={()=>router.push("/dashboard")}>Log-in</button>
+      <button onClick={()=>router.push("/login")}>Log-in</button>
     </div>
   );
 }

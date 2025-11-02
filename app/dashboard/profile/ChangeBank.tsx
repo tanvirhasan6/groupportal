@@ -16,78 +16,79 @@ const ChangeBank = () => {
     const [accno, setAccno] = useState('')
     const [loading, setLoading] = useState(false)
 
-    // Fetch bank list when bank type changes
-    useEffect(() => {
-
+    const handleBankTypeChange = async (val) =>{
+        
+        
         setBank('')
         setBranch('')
         setBankList([])
         setBranchList([])
-
-        if (!bankType) return
         
-        const fetchBanks = async () => {
-            try {
-                const res = await fetch(
-                    `http://localhost:5001/api/grpclaimportal/profile/getBanks?banktype=${bankType}`,
-                    { method: 'GET', credentials: 'include' }
-                )
-                const data = await res.json() 
+        if (!val) return
 
-                if (data?.status === 200) {
-                    const formatted = (data.result || []).map((item: any) => ({
-                        value: item.BANKCODE,   // or whatever your field name is
-                        label: item.BANKNAME,   // adjust based on your API
-                    }))
-                    
-                    setBankList(formatted)
-                } else {
-                    setBankList([])
-                    toast.error(data?.message || 'No banks found.')
-                }
-            } catch (err) {
-                toast.error('Failed to load bank list.')
+        setBankType(val)
+        
+        try {
+            const res = await fetch(
+                `http://localhost:5001/api/grpclaimportal/profile/getBanks?banktype=${val}`,
+                { method: 'GET', credentials: 'include' }
+            )
+            const data = await res.json() 
+
+            if (data?.status === 200) {
+                const formatted = (data.result || []).map((item: any) => ({
+                    value: item.BANKCODE,
+                    label: item.BANKNAME,
+                }))
+                
+                setBankList(formatted)
+            } else {
+                setBankList([])
+                toast.error(data?.message || 'No banks found.')
             }
+        } catch (err) {
+            toast.error('Failed to load bank list.')
         }
-
-        fetchBanks()
-    }, [bankType])
+        
+    }
 
     // Fetch branch list when bank changes
-    useEffect(() => {
-        
+
+    const handleBankChange = async (val) => {
+
         setBranchList([])
-        
-        if (!bank || !bankType) return
         setBranch('')
-        const fetchBranches = async () => {
-            try {
-                const res = await fetch(
-                    `http://localhost:5001/api/grpclaimportal/profile/getBankBranch?banktype=${bankType}&bankcode=${bank}`,
-                    { method: 'GET', credentials: 'include' }
-                )
-                const data = await res.json()
-                
-                if (data?.status === 200) {
-                    const formatted = (data.result || []).map((item: any) => ({
-                        value: item.ROUTINGNO,   // or whatever your field name is
-                        label: item.BRANCHNAME,   // adjust based on your API
-                    }))
-                    setBranchList(formatted)
-                } else {
-                    setBranchList([])
-                    toast.error(data?.message || 'No branches found.')
-                }
-            } catch (err) {
-                toast.error('Failed to load branch list.')
+
+        if (!val || !bankType) return
+        
+        setBank(val)
+
+        try {
+            const res = await fetch(
+                `http://localhost:5001/api/grpclaimportal/profile/getBankBranch?banktype=${bankType}&bankcode=${val}`,
+                { method: 'GET', credentials: 'include' }
+            )
+            const data = await res.json()
+            
+            if (data?.status === 200) {
+                const formatted = (data.result || []).map((item: any) => ({
+                    value: item.ROUTINGNO,   // or whatever your field name is
+                    label: item.BRANCHNAME,   // adjust based on your API
+                }))
+                setBranchList(formatted)
+            } else {
+                setBranchList([])
+                toast.error(data?.message || 'No branches found.')
             }
+        } catch (err) {
+            toast.error('Failed to load branch list.')
         }
 
-        fetchBranches()
-    }, [bank])
+    }
 
     const handleBankUpdate = async () => {
-        if (!bankType || !bank || !branch) {
+
+        if (!bankType || !bank || !branch || !accno) {
             toast.error('Please select Bank Type, Bank, and Branch.')
             return
         }
@@ -95,8 +96,21 @@ const ChangeBank = () => {
         setLoading(true)
         try {
             const res = await fetch(
-                `http://localhost:5001/api/grpclaimportal/profile/bankChange?policyno=${user?.POLICY_NO}&userid=${user?.USERNAME}&banktype=${bankType}&bank=${bank}&branch=${branch}`,
-                { method: 'GET', credentials: 'include' }
+                `http://localhost:5001/api/grpclaimportal/profile/bankUpdate`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(
+                        { 
+                            policyno: user?.POLICY_NO, 
+                            userid: user?.USERNAME,
+                            bankid: bank,
+                            routingno: branch,
+                            accno
+                        }
+                    ),
+                    credentials: "include",
+                }
             )
             const data = await res.json()
 
@@ -127,7 +141,7 @@ const ChangeBank = () => {
                         { value: 'M', label: 'Mobile Banking' },
                     ]}
                     value={bankType}
-                    onChange={setBankType}
+                    onChange={handleBankTypeChange}
                     placeholder="Select Bank Type"
                     onFocus={(e) => e.target.select()}
                 />
@@ -136,7 +150,7 @@ const ChangeBank = () => {
                     label="Bank Name"
                     options={bankList}
                     value={bank}
-                    onChange={setBank}
+                    onChange={handleBankChange}
                     placeholder="Select Bank"
                     disabled={!bankType || bankList.length === 0}
                     onFocus={(e) => e.target.select()}

@@ -98,10 +98,10 @@ function LogIn({ onForgot, onSuccess }: LogInProps): ReactElement {
             
             if (data?.status!==200 || data?.status!==201) {
                 setError(data?.message || 'Login failed')
+                setLoading(false)
                 return
             }
             
-            setLoading(false)
 
         } catch (err) {
             if (err instanceof Error) {
