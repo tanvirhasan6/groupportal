@@ -8,6 +8,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import ChangeEmail from './ChangeEmail';
 import ChangeMobile from './ChangeMobile';
 import ChangeBank from './ChangeBank';
+import ChangePassword from './ChangePassword';
 
 type Panel = "email" | "mobile" | "password" | "bank" | null;
 
@@ -273,19 +274,6 @@ const page = () => {
                                 Change Password
                             </button>
 
-                            {/* <button
-                                className={`px-4 py-2 rounded-lg bg-gradient-to-r from-orange-500 to-amber-600
-                                    shadow-lg shadow-orange-900/40
-                                    hover:from-orange-400 hover:to-amber-500
-                                    transition-all duration-300
-                                    backdrop-blur-md bg-opacity-90 border border-white/20
-                                ${activePanel === "bank" ? "bg-blue-600 text-white" : "bg-white/20 hover:bg-white/30 text-gray-100"}
-                                `}
-                                onClick={() => togglePanel("bank")}
-                            >
-                                Update Bank Info
-                            </button> */}
-
                         </div>
 
                     </div>
@@ -313,8 +301,7 @@ const page = () => {
 
                     {activePanel === "password" && (
                     <UpdateCard title="Change Password">
-                        <input type="password" placeholder="Current Password" className="input-style"/>
-                        <input type="password" placeholder="New Password" className="input-style"/>
+                        <ChangePassword/>
                     </UpdateCard>
                     )}
 
