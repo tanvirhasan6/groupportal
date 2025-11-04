@@ -82,7 +82,7 @@
                                 {!sidebarOpen && (<FaBars className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition" size={30} onClick={() => setSidebarOpen(true)} />)}
                                 {sidebarOpen && (<FaTimes className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition" size={30} onClick={() => setSidebarOpen(false)} />)}                
                                 
-                                <h1 className="text-lg font-semibold text-cyan-400 tracking-wider">Dashboard</h1>
+                                {/* <h1 className="text-lg font-semibold text-cyan-400 tracking-wider">Dashboard</h1> */}
 
                             </div>
                             <div className="relative">

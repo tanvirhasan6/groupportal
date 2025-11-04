@@ -69,7 +69,7 @@ const page = () => {
         fileInputRef.current?.click(); // open file picker
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
@@ -79,6 +79,32 @@ const page = () => {
         // TODO: upload the file to server here
         };
         reader.readAsDataURL(file);
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const res = await fetch('http://localhost:5001/api/grpclaimportal/profile/uploadImage', {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            })
+
+            const text = await res.text(); // read raw response
+            let data;
+            try {
+                data = JSON.parse(text); // parse JSON if possible
+            } catch {
+                console.error('Server did not return JSON:', text);
+                return;
+            }
+
+            console.log('Upload successful', data?.message);
+
+        } catch (err) {
+            console.error('Upload failed:', err);
+            toast.error('Upload failed');
+        }
     }    
 
     return (
@@ -100,10 +126,9 @@ const page = () => {
                                 className="w-full h-full object-cover"
                             />
 
-                            {/* Overlay Camera Icon */}
                             <button
                                 type="button"
-                                onClick={handleImageClick}
+                                // onClick={handleImageClick}
                                 className="absolute bottom-0 left-1/2 transform -translate-x-1/2 bg-black/60 text-white p-2 rounded-full hover:bg-black/80 transition"
                             >
                                 <FaCamera />
@@ -132,7 +157,7 @@ const page = () => {
 
                     <div className="w-full text-gray-100 space-y-1">
 
-                        <div className='w-full flex flex-col gap-4'>
+                        <div className='w-full gird grid-cols-2 gap-4'>
 
                             <div className="flex flex-col w-full">
                                 <label 

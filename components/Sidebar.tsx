@@ -62,7 +62,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen })
                         <Link
                             key={index}
                             className="text-left px-4 py-2 rounded-lg hover:bg-gray-700 hover:text-cyan-400 flex flex-row gap-2 items-center" 
-                            href={`dashboard/${menu.toLowerCase().replace(/\s+/g, "-")}`}
+                            href={`dashboard/${menu.replace(/\s+/g, "")}`}
                         >
                             {iconMap[menu] || <FaFileAlt />} {menu}
                         </Link>
