@@ -2,6 +2,15 @@
 const nextConfig = {
   /* config options here */
   reactCompiler: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "app.zenithlifebd.com",
+        pathname: "/**", // 👈 allows all paths from that domain
+      },
+    ],
+  },
 };
 
 export default nextConfig;
