@@ -12,8 +12,8 @@ export default function SearchableSelect({
 }) {
     const [query, setQuery] = useState('')
     const [showOptions, setShowOptions] = useState(false)
-    const wrapperRef = useRef < HTMLDivElement > (null)
-    const inputRef = useRef < HTMLInputElement > (null)
+    const wrapperRef = useRef(null)
+    const inputRef = useRef (null)
 
     const filteredOptions = options.filter((opt) =>
         opt?.label?.toLowerCase().includes(query?.toLowerCase())

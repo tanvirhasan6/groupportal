@@ -174,7 +174,7 @@ const ChangeBank = () => {
                         value={accno}
                         onChange={(e) => setAccno(e.target.value)}
                         placeholder="Enter your account number"
-                        className="w-full border-0 border-b-1 border-gray-500 bg-transparent focus:border-cyan-200 focus:ring-0 focus:outline-none placeholder-gray-400 text-white"
+                        className="w-full border-0 border-b border-gray-500 bg-transparent focus:border-cyan-200 focus:ring-0 focus:outline-none placeholder-gray-400 text-white"
                         required
                     />
                 </div>

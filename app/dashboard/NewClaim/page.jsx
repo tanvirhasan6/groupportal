@@ -5,6 +5,7 @@ import { FaCloudUploadAlt } from 'react-icons/fa'
 import { useUser } from "@/app/context/UserContext"
 import toast, { Toaster } from 'react-hot-toast'
 import DatePickerInput from '@/components/MyDatePicker/DatePickerInput'
+import SearchableSelect from '@/components/SearchableSelect'
 
 
 const Page = () => {
@@ -15,6 +16,9 @@ const Page = () => {
     const [receiptFiles, setReceiptFiles] = useState([])
     const [dischargeFiles, setDischargeFiles] = useState([])
     const [otherFiles, setOtherFiles] = useState([])
+
+    const [diseasesData, setDiseasesData] = useState([])
+    const [hospitalData, setHospitalData] = useState([])
 
     const allSelectedFiles = [
         ...prescriptionFiles,
@@ -119,7 +123,7 @@ const Page = () => {
             <div className="border border-white/20 rounded-xl p-4 bg-gray-900/40 hover:bg-gray-900/60 transition">
                 <label className="block text-sm mb-2 text-gray-300">{label}</label>
                 <div className="flex items-center gap-4">
-                    <FaCloudUploadAlt className="text-cyan-400 text-2xl" />
+                    {/* <FaCloudUploadAlt className="text-cyan-400 text-2xl" /> */}
                     <input
                         type="file"
                         multiple
@@ -180,8 +184,54 @@ const Page = () => {
         }
     }
 
+    const diseasesList = async () => {
+        try {
+            const res = await fetch(
+                `http://localhost:5001/api/grpclaimportal/claim/diseases`,
+                { method: 'GET', credentials: 'include' }
+            )
+            const data = await res.json()
+            if (data?.status === 404) toast.error('No Benefit Found')
+            else if (data?.status === 200) {
+                const formatted = (data.result || []).map((item) => ({
+                    value: item.CODE,
+                    label: item.DESCRIPTION,
+                }))
+                setDiseasesData(formatted)
+            }
+
+        } catch (error) {
+            toast.error(`${error}`)
+        }
+    }
+
+    const hospitalList = async () => {
+        try {
+            const res = await fetch(
+                `http://localhost:5001/api/grpclaimportal/claim/hospitals`,
+                { method: 'GET', credentials: 'include' }
+            )
+            const data = await res.json()
+            if (data?.status === 404) toast.error('No Benefit Found')
+            else if (data?.status === 200) {
+                const formatted = (data.result || []).map((item) => ({
+                    value: item.CODE,
+                    label: item.DESCRIPTION,
+                }))
+                setHospitalData(formatted)
+            }
+
+        } catch (error) {
+            toast.error(`${error}`)
+        }
+    }
+
     useEffect(() => {
-        if (user?.USERNAME) getSlotData()
+        if (user?.USERNAME) {
+            getSlotData()
+            diseasesList()
+            hospitalList()
+        }
     }, [user?.USERNAME])
 
     useEffect(() => {
@@ -218,11 +268,11 @@ const Page = () => {
                     dischargeDate: "",
                 }))
             }
-        }       
+        }
 
     }, [formData.consultDate])
 
-    useEffect(() => {       
+    useEffect(() => {
 
         if (formData.admissionDate) {
             const [day, month, year] = formData.admissionDate.split("/").map(Number);
@@ -239,13 +289,14 @@ const Page = () => {
     }, [formData.admissionDate])
 
     return (
-        <div className="w-full min-h-screen text-white flex justify-center items-start p-6">
+        <div className="w-full min-h-screen text-white flex justify-center items-start p-2">
             <Toaster />
-            <form onSubmit={handleSubmit} className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-8 space-y-8">
+            <form onSubmit={handleSubmit} className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-3 sm:p-8 space-y-8">
                 <h1 className="text-center text-3xl font-semibold text-cyan-400">New Claim</h1>
 
-                <div className="grid md:grid-cols-3 gap-6">
-                    <div>
+                <div className="grid md:grid-cols-12 gap-6">
+
+                    <div className='col-span-4'>
                         <label className="block text-sm mb-1 text-gray-300">Coverage Period</label>
                         <select
                             name="coverage"
@@ -260,7 +311,7 @@ const Page = () => {
                         </select>
                     </div>
 
-                    <div>
+                    <div className='col-span-4'>
                         <label className="block text-sm mb-1 text-gray-300">Claim Type</label>
                         <select
                             name="claimType"
@@ -276,7 +327,7 @@ const Page = () => {
                         </select>
                     </div>
 
-                    <div className='w-full flex flex-col sm:flex-row gap-2'>
+                    <div className='col-span-4 w-full flex flex-col sm:flex-row gap-2'>
                         <DatePickerInput
                             name="consultDate"
                             label="Consult/Treatment Date"
@@ -310,7 +361,7 @@ const Page = () => {
                         )}
                     </div>
 
-                    <div>
+                    <div className='col-span-4 md:col-span-2'>
                         <label className="block text-sm mb-1 text-gray-300">Amount</label>
                         <input
                             type="number"
@@ -323,8 +374,8 @@ const Page = () => {
                         />
                     </div>
 
-                    <div>
-                        <label className="block text-sm mb-1 text-gray-300">Disease</label>
+                    <div className='col-span-4 md:col-span-5'>
+                        {/* <label className="block text-sm mb-1 text-gray-300">Disease</label>
                         <select
                             name="disease"
                             value={formData.disease}
@@ -335,10 +386,19 @@ const Page = () => {
                             <option value="fever">Fever</option>
                             <option value="flu">Flu</option>
                             <option value="injury">Injury</option>
-                        </select>
+                        </select> */}
+                        <SearchableSelect
+                            label="Disease"
+                            options={diseasesData}
+                            value={formData?.disease || ''}
+                            onChange={(val) => setFormData(prev => ({ ...prev, disease: val }))}
+                            placeholder="Select Disease"
+                            disabled={false}
+                            onFocus={(e) => e.target.select()}
+                        />
                     </div>
 
-                    <div>
+                    <div className='col-span-4 md:col-span-5'>
                         <label className="block text-sm mb-1 text-gray-300">Hospital</label>
                         <select
                             name="hospital"
@@ -352,6 +412,7 @@ const Page = () => {
                             <option value="labaid">Labaid</option>
                         </select>
                     </div>
+
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
